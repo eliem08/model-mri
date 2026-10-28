@@ -4,22 +4,19 @@
 
 A small interpretability workbench for inspecting hidden-state statistics across transformer layers.
 
-## Activation report
+## Interactive dashboard
 
     pip install -r requirements.txt
+    streamlit run dashboard.py
+
+Choose a model, enter text, run the activation profile, and inspect the layer-wise chart and table in your browser.
+
+## Activation report
+
     python activation_report.py --model-id distilgpt2 --text "The sky is blue."
-
-Creates outputs/activation-report/report.json, layers.csv, and token-layer.csv. Reports layer-wise RMS, mean absolute activation, maximum absolute activation, zero fraction, and per-token/per-layer summaries.
-
     python activation_report.py --model-id distilgpt2 --device cuda --output outputs/mri-run
 
-The device auto-option selects CUDA, Apple MPS, or CPU. In Colab, select a GPU runtime, install requirements, then run the command above.
-
-## Quickstart
-
-    python main.py
-
-The original demo uses tiny random weights to validate the software path. Use a pretrained model for meaningful activation measurements.
+Creates JSON and CSV artifacts with layer-wise RMS, mean absolute activation, maximum absolute activation, zero fraction, and per-token/per-layer summaries. Device auto-selection supports CUDA, Apple MPS, and CPU.
 
 ## Interpretation cautions
 
