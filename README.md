@@ -2,44 +2,28 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/eliem08/model-mri/blob/main/colab.ipynb)
 
+A small interpretability workbench for inspecting hidden-state statistics across transformer layers.
 
-Inspect transformer hidden-state activations and compare layers with a heatmap.
+## Activation report
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![PyTorch](https://img.shields.io/badge/PyTorch-GPU%20or%20CPU-ee4c2c)
+    pip install -r requirements.txt
+    python activation_report.py --model-id distilgpt2 --text "The sky is blue."
+
+Creates outputs/activation-report/report.json, layers.csv, and token-layer.csv. Reports layer-wise RMS, mean absolute activation, maximum absolute activation, zero fraction, and per-token/per-layer summaries.
+
+    python activation_report.py --model-id distilgpt2 --device cuda --output outputs/mri-run
+
+The device auto-option selects CUDA, Apple MPS, or CPU. In Colab, select a GPU runtime, install requirements, then run the command above.
 
 ## Quickstart
 
-```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-python main.py
-```
+    python main.py
 
-Default run uses a tiny randomly initialized model to validate the software path and does not claim useful model behavior.
+The original demo uses tiny random weights to validate the software path. Use a pretrained model for meaningful activation measurements.
 
-## Use a pretrained model
+## Interpretation cautions
 
-Set `NEURONLAB_MODEL` or pass `--real-model --model-id MODEL_ID`. For example, select a small causal language model you are licensed to use:
-
-```bash
-python main.py --real-model --model-id distilgpt2 --text "The sky is"
-```
-
-Model weights take disk, RAM, and often VRAM. The runtime detects CUDA, Apple MPS, or CPU automatically. Install the appropriate PyTorch build for your hardware if needed.
-
-## Google Colab
-
-Open `colab.ipynb` in Colab, select **Runtime → Change runtime type → T4 GPU** when available, then run all cells. The same notebook also runs on CPU, but inference is slower. Free GPU availability and quotas vary.
-
-## Reproducibility and limitations
-
-- Save output artifacts under `outputs/`. Repeat experiments on held-out inputs before making claims.
-- Random demo weights only exercise code paths. They are not suitable for quality, safety, or interpretability conclusions.
-- Do not treat lexical heuristics or activation patterns as reliable evidence of intent or deception.
-- Activation steering may harm other capabilities; record baselines and random controls.
-- Do not expose model inference to the public internet without authentication and resource controls.
+Activation magnitudes are descriptive statistics, not explanations of model behavior. Compare prompts, layers, tokenization, and model versions; keep exact model IDs and inputs with results. Avoid claims about intent or deception from activation patterns alone.
 
 ## License
 
