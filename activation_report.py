@@ -3,7 +3,8 @@ from __future__ import annotations
 import argparse, csv, json
 from pathlib import Path
 import torch
-from transformers import AutoModel, AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from provenance import build_manifest
 
 def choose_device(requested: str) -> str:
     if requested != "auto": return requested
@@ -33,7 +34,7 @@ def profile(model_id: str, text: str, output: str = "outputs/activation-report",
             "zero_fraction": float((values.abs() < 1e-8).float().mean().cpu()),
         })
     out = Path(output); out.mkdir(parents=True, exist_ok=True)
-    report = {"model_id": model_id, "device": device, "input_text": text, "token_count": int(inputs["input_ids"].shape[1]), "layers": rows}
+    report = {"model_id": model_id, "device": device, "input_text": text, "token_count": int(inputs["input_ids"].shape[1]), "layers": rows, "manifest": build_manifest("model-mri", model_id=model_id, device=device, config={"max_length": max_length}, inputs={"text": text})}
     (out / "report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     with (out / "layers.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0])); writer.writeheader(); writer.writerows(rows)
